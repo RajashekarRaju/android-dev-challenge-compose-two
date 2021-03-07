@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.core.view.WindowCompat
 import com.example.androiddevchallenge.ui.countdownTimer.CountdownTimer
+import com.example.androiddevchallenge.ui.countdownTimer.Hourglass
 import com.example.androiddevchallenge.ui.theme.CountdownTimerTheme
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             ProvideWindowInsets {
                 CountdownTimerTheme {
                     CountdownTimer()
+                    Hourglass()
                 }
             }
         }
