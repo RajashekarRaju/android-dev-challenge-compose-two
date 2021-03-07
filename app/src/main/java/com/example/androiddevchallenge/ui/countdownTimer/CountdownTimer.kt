@@ -15,6 +15,7 @@
  */
 package com.example.androiddevchallenge.ui.countdownTimer
 
+import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -84,9 +84,9 @@ fun CountdownTimer(
         verticalArrangement = Arrangement.Center
     ) {
 
-        var textVisible by remember { mutableStateOf(true) }
+        var startTextVisible by rememberSaveable { mutableStateOf(true) }
 
-        if (textVisible) {
+        if (startTextVisible) {
 
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -104,33 +104,41 @@ fun CountdownTimer(
                         .border(1.dp, MaterialTheme.colors.onBackground, CircleShape)
                         .padding(horizontal = 20.dp, vertical = 44.dp)
                         .clickable {
-                            textVisible = !textVisible
+                            startTextVisible = !startTextVisible
                         }
                 )
             }
         } else {
 
-            var countdownSetterVisible by remember { mutableStateOf(true) }
+            var countdownSetterVisible by rememberSaveable { mutableStateOf(true) }
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                if (!countdownSetterVisible) {
-                    TextTimer(viewModel = viewModel)
-                } else {
+                var seconds by rememberSaveable { mutableStateOf("0") }
+
+                if (countdownSetterVisible) {
+
+                    Text(
+                        text = DateUtils.formatElapsedTime(seconds.toLong()),
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.padding(vertical = 20.dp)
+                    )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        SetCountDownMinutes()
-                        SetCountDownSeconds()
+                        seconds = setCountDownSeconds()
                     }
 
                     Button(
-                        onClick = { countdownSetterVisible = !countdownSetterVisible },
+                        onClick = {
+                            countdownSetterVisible = !countdownSetterVisible
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 48.dp, vertical = 16.dp),
@@ -142,6 +150,8 @@ fun CountdownTimer(
                             style = MaterialTheme.typography.h6,
                         )
                     }
+                } else {
+                    TextTimer(viewModel = viewModel, seconds.toLong())
                 }
             }
         }
@@ -149,14 +159,15 @@ fun CountdownTimer(
 }
 
 @Composable
-fun SetCountDownSeconds() {
-    var seconds by rememberSaveable { mutableStateOf("00") }
+fun setCountDownSeconds(): String {
+
+    var timeUnit by rememberSaveable { mutableStateOf("00") }
 
     TextField(
-        value = seconds,
+        value = timeUnit,
         onValueChange = {
-            seconds = it
-            if (it.length > 2) seconds = seconds.takeLast(2)
+            timeUnit = it
+            if (it.length > 4) timeUnit = timeUnit.takeLast(4)
         },
         label = null,
         placeholder = { Text("Sec") },
@@ -171,44 +182,26 @@ fun SetCountDownSeconds() {
             .size(80.dp)
             .clip(RoundedCornerShape(24.dp))
             .border(1.dp, Color.Gray, RectangleShape)
-            .background(Color.Gray, RectangleShape)
+            .background(Color.Gray, RectangleShape),
     )
-}
 
-@Composable
-fun SetCountDownMinutes() {
-    var minutes by rememberSaveable { mutableStateOf("00") }
-
-    TextField(
-        value = minutes,
-        onValueChange = {
-            minutes = it
-            if (it.length > 2) minutes = minutes.takeLast(2)
-        },
-        label = null,
-        placeholder = { Text("Min") },
-        textStyle = MaterialTheme.typography.h3,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-        ),
-        maxLines = 1,
-        modifier = Modifier
-            .padding(24.dp)
-            .size(80.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .border(1.dp, Color.Gray, RectangleShape)
-            .background(Color.Gray, RectangleShape)
-    )
+    return timeUnit
 }
 
 @Composable
 private fun TextTimer(
-    viewModel: CountdownTimerViewModel
+    viewModel: CountdownTimerViewModel,
+    seconds: Long
 ) {
-    val seconds: Long? by viewModel.currentTime.observeAsState()
+    val liveCount: Long? by viewModel.currentTime.observeAsState()
+    viewModel.startCountdown(seconds)
+
+    val format = liveCount?.let {
+        DateUtils.formatElapsedTime(it)
+    }
+
     Text(
-        text = seconds.toString(),
+        text = format.toString(),
         style = MaterialTheme.typography.h3,
         color = MaterialTheme.colors.onBackground
     )
