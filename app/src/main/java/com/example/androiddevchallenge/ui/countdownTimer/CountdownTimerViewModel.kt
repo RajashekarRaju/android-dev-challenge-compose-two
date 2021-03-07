@@ -22,25 +22,31 @@ import androidx.lifecycle.ViewModel
 
 class CountdownTimerViewModel : ViewModel() {
 
-    companion object {
-        private const val DONE = 0L
-        private const val ONE_SECOND = 1000L
-        private const val COUNTDOWN_TIME = 60000L
-    }
-
     private val _currentTime = MutableLiveData<Long>()
     val currentTime: LiveData<Long> = _currentTime
 
-    init {
-        object : CountDownTimer(COUNTDOWN_TIME, ONE_SECOND) {
+    private var countDownTimer: CountDownTimer? = null
 
-            override fun onTick(millisUntilFinished: Long) {
-                _currentTime.value = millisUntilFinished / ONE_SECOND
-            }
+    fun startCountdown(
+        seconds: Long
+    ) {
+        if (countDownTimer == null) {
 
-            override fun onFinish() {
-                _currentTime.value = DONE
-            }
-        }.start()
+            object : CountDownTimer(seconds * ONE_SECOND, ONE_SECOND) {
+
+                override fun onTick(millisUntilFinished: Long) {
+                    _currentTime.value = millisUntilFinished / ONE_SECOND
+                }
+
+                override fun onFinish() {
+                    _currentTime.value = FINISHED
+                }
+            }.start().also { countDownTimer = it }
+        }
+    }
+
+    companion object {
+        private const val FINISHED = 0L
+        private const val ONE_SECOND = 1000L
     }
 }
