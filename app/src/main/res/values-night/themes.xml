@@ -11,7 +11,7 @@
       -->
     <!-- Base application theme. -->
     <style name="Theme.CountdownTimer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@color/immersive_sys_ui</item>
-        <item name="android:navigationBarColor">@color/nav_bar</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 </resources>
