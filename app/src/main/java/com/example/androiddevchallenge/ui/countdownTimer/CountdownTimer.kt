@@ -16,6 +16,7 @@
 package com.example.androiddevchallenge.ui.countdownTimer
 
 import android.text.format.DateUtils
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,7 +33,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -45,21 +45,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
+import com.example.androiddevchallenge.ui.components.Hourglass
+import com.example.androiddevchallenge.ui.components.InfinitelyFlowingRing
 import com.example.androiddevchallenge.ui.theme.CountdownTimerTheme
-import com.example.androiddevchallenge.ui.theme.grey100
-import com.example.androiddevchallenge.ui.theme.grey900
-import com.example.androiddevchallenge.uitls.colorInfiniteTransition
-import com.example.androiddevchallenge.uitls.scaleInfiniteTransition
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
@@ -75,6 +74,7 @@ fun DarkPreview() {
 fun CountdownTimer(
     viewModel: CountdownTimerViewModel = viewModel()
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,24 +88,49 @@ fun CountdownTimer(
 
         if (startTextVisible) {
 
+            val canvasCircleColor = MaterialTheme.colors.primaryVariant
+
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
 
+                Hourglass()
+
                 InfinitelyFlowingRing()
 
-                Text(
-                    text = stringResource(R.string.start_countdown_timer_title),
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onBackground,
+                Canvas(
                     modifier = Modifier
+                        .size(360.dp)
                         .clip(CircleShape)
-                        .border(1.dp, MaterialTheme.colors.onBackground, CircleShape)
-                        .padding(horizontal = 20.dp, vertical = 44.dp)
                         .clickable {
                             startTextVisible = !startTextVisible
                         }
+                ) {
+                    val canvasWidth = size.width
+                    val canvasHeight = size.height
+                    drawCircle(
+                        color = canvasCircleColor,
+                        center = Offset(
+                            x = canvasWidth / 2,
+                            y = canvasHeight / 2
+                        ),
+                        radius = size.minDimension / 5,
+                        style = Stroke(
+                            16f,
+                            pathEffect = PathEffect.dashPathEffect(
+                                intervals = floatArrayOf(10f, 30f),
+                            )
+                        )
+                    )
+                }
+
+                Text(
+                    text = "Chaos",
+                    style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 44.dp)
                 )
             }
         } else {
@@ -204,54 +229,5 @@ private fun TextTimer(
         text = format.toString(),
         style = MaterialTheme.typography.h3,
         color = MaterialTheme.colors.onBackground
-    )
-}
-
-@Composable
-fun InfinitelyFlowingRing() {
-
-    val scaleOne = scaleInfiniteTransition(3f, 20f, 800)
-    val colorOne = colorInfiniteTransition(grey900, grey100, 800)
-
-    Icon(
-        painter = painterResource(id = R.drawable.ic_radio_button),
-        contentDescription = null,
-        modifier = Modifier
-            .graphicsLayer(
-                scaleX = scaleOne,
-                scaleY = scaleOne
-            )
-            .size(80.dp),
-        tint = colorOne,
-    )
-
-    val scaleTwo = scaleInfiniteTransition(3f, 20f, 1200)
-    val colorTwo = colorInfiniteTransition(grey900, grey100, 1200)
-
-    Icon(
-        painter = painterResource(id = R.drawable.ic_radio_button),
-        contentDescription = null,
-        modifier = Modifier
-            .graphicsLayer(
-                scaleX = scaleTwo,
-                scaleY = scaleTwo
-            )
-            .size(80.dp),
-        tint = colorTwo,
-    )
-
-    val scaleThree = scaleInfiniteTransition(3f, 20f, 1400)
-    val colorThree = colorInfiniteTransition(grey900, grey100, 1400)
-
-    Icon(
-        painter = painterResource(id = R.drawable.ic_radio_button),
-        contentDescription = null,
-        modifier = Modifier
-            .graphicsLayer(
-                scaleX = scaleThree,
-                scaleY = scaleThree
-            )
-            .size(80.dp),
-        tint = colorThree,
     )
 }

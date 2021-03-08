@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.androiddevchallenge.ui.countdownTimer
+package com.example.androiddevchallenge.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +28,14 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.ui.theme.CountdownTimerTheme
+import com.example.androiddevchallenge.ui.theme.grey100
+import com.example.androiddevchallenge.ui.theme.grey900
+import com.example.androiddevchallenge.uitls.colorInfiniteTransition
+import com.example.androiddevchallenge.uitls.scaleInfiniteTransition
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
@@ -55,12 +59,17 @@ fun Hourglass() {
         verticalArrangement = Arrangement.Center
     ) {
 
-        val lineColor = MaterialTheme.colors.onBackground
+        val scale = scaleInfiniteTransition(0.1f, 1f, 1200)
+        val lineColor = colorInfiniteTransition(grey900, grey100, 1200)
 
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
         ) {
             val canvasSize = size
             val canvasWidth = size.width
@@ -82,6 +91,10 @@ fun Hourglass() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
         ) {
 
             // Left top
@@ -161,6 +174,10 @@ fun Hourglass() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
         ) {
             val canvasSize = size
             val canvasWidth = size.width
