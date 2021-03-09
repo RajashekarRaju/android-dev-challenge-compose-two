@@ -26,6 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 
+
+fun formatToInt(
+    formatString: String?,
+    index: Int
+): Int? {
+    return formatString?.get(index)?.toString()?.toInt()
+}
+
 @Composable
 fun scaleInfiniteTransition(
     initialValue: Float,

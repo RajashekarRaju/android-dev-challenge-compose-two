@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             ProvideWindowInsets {
                 CountdownTimerTheme {
                     CountdownTimer()
-                    // Numbers()
                 }
             }
         }

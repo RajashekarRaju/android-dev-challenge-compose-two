@@ -16,6 +16,7 @@
 package com.example.androiddevchallenge.ui.countdownTimer
 
 import android.text.format.DateUtils
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,10 +59,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.ui.components.Hourglass
 import com.example.androiddevchallenge.ui.components.InfinitelyFlowingRing
+import com.example.androiddevchallenge.ui.components.Numbers
 import com.example.androiddevchallenge.ui.theme.CountdownTimerTheme
+import com.example.androiddevchallenge.uitls.formatToInt
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
+@ExperimentalAnimationApi
 @Preview("Dark Theme", widthDp = 360, heightDp = 640)
 @Composable
 fun DarkPreview() {
@@ -70,10 +74,18 @@ fun DarkPreview() {
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
 fun CountdownTimer(
     viewModel: CountdownTimerViewModel = viewModel()
 ) {
+
+    val canvasCircleColor = MaterialTheme.colors.primaryVariant
+
+    var showTimeSetter by rememberSaveable { mutableStateOf(true) }
+    var seconds by rememberSaveable { mutableStateOf("0") }
+    var countdownSetterVisible by rememberSaveable { mutableStateOf(true) }
+    var showHourglass by rememberSaveable { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -83,100 +95,104 @@ fun CountdownTimer(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
 
-        var startTextVisible by rememberSaveable { mutableStateOf(true) }
-
-        if (startTextVisible) {
-
-            val canvasCircleColor = MaterialTheme.colors.primaryVariant
-
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-
-                Hourglass()
-
-                InfinitelyFlowingRing()
-
-                Canvas(
-                    modifier = Modifier
-                        .size(360.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            startTextVisible = !startTextVisible
-                        }
-                ) {
-                    val canvasWidth = size.width
-                    val canvasHeight = size.height
-                    drawCircle(
-                        color = canvasCircleColor,
-                        center = Offset(
-                            x = canvasWidth / 2,
-                            y = canvasHeight / 2
-                        ),
-                        radius = size.minDimension / 5,
-                        style = Stroke(
-                            16f,
-                            pathEffect = PathEffect.dashPathEffect(
-                                intervals = floatArrayOf(10f, 30f),
-                            )
-                        )
-                    )
-                }
-
-                Text(
-                    text = "Chaos",
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onBackground,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp, vertical = 44.dp)
-                )
-            }
-        } else {
-
-            var countdownSetterVisible by rememberSaveable { mutableStateOf(true) }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                var seconds by rememberSaveable { mutableStateOf("0") }
+            if (!showTimeSetter) {
 
                 if (countdownSetterVisible) {
 
-                    Text(
-                        text = DateUtils.formatElapsedTime(seconds.toLong()),
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground,
-                        modifier = Modifier.padding(vertical = 20.dp)
-                    )
-
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        seconds = setCountDownSeconds()
-                    }
 
-                    Button(
-                        onClick = {
-                            countdownSetterVisible = !countdownSetterVisible
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 48.dp, vertical = 16.dp),
-                        shape = MaterialTheme.shapes.large,
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
-                    ) {
                         Text(
-                            text = stringResource(R.string.start_countdown_button),
-                            style = MaterialTheme.typography.h6,
+                            text = DateUtils.formatElapsedTime(seconds.toLong()),
+                            style = MaterialTheme.typography.h5,
+                            color = MaterialTheme.colors.onBackground,
+                            modifier = Modifier.padding(vertical = 20.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            seconds = setCountDownSeconds()
+                        }
+
+                        Button(
+                            onClick = {
+                                showTimeSetter = !showTimeSetter
+                                countdownSetterVisible = !countdownSetterVisible
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 48.dp, vertical = 16.dp),
+                            shape = MaterialTheme.shapes.large,
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.start_countdown_button),
+                                style = MaterialTheme.typography.h6,
+                            )
+                        }
+                    }
+                }
+                // else {
+                //     TextTimer(viewModel = viewModel, seconds.toLong())
+                // }
+
+                // Text(
+                //     text = "Hide",
+                //     style = MaterialTheme.typography.h2,
+                //     color = MaterialTheme.colors.onBackground,
+                //     modifier = Modifier
+                //         .padding(horizontal = 20.dp, vertical = 44.dp)
+                //         .clickable {
+                //             showTimeSetter = !showTimeSetter
+                //         }
+                // )
+            } else {
+
+                if (showHourglass) {
+
+                    Hourglass()
+
+                    Canvas(
+                        modifier = Modifier
+                            .size(360.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                showTimeSetter = !showTimeSetter
+                            }
+                    ) {
+                        val canvasWidth = size.width
+                        val canvasHeight = size.height
+                        drawCircle(
+                            color = canvasCircleColor,
+                            center = Offset(
+                                x = canvasWidth / 2,
+                                y = canvasHeight / 2
+                            ),
+                            radius = size.minDimension / 5,
+                            style = Stroke(
+                                16f,
+                                pathEffect = PathEffect.dashPathEffect(
+                                    intervals = floatArrayOf(10f, 30f),
+                                )
+                            )
                         )
                     }
-                } else {
+                }
+
+                InfinitelyFlowingRing()
+
+                if (!countdownSetterVisible) {
                     TextTimer(viewModel = viewModel, seconds.toLong())
+                    showHourglass = !showHourglass
                 }
             }
         }
@@ -213,6 +229,7 @@ fun setCountDownSeconds(): String {
     return timeUnit
 }
 
+@ExperimentalAnimationApi
 @Composable
 private fun TextTimer(
     viewModel: CountdownTimerViewModel,
@@ -221,13 +238,14 @@ private fun TextTimer(
     val liveCount: Long? by viewModel.currentTime.observeAsState()
     viewModel.startCountdown(seconds)
 
-    val format = liveCount?.let {
+    val elapsedTime: String? = liveCount?.let {
         DateUtils.formatElapsedTime(it)
     }
 
-    Text(
-        text = format.toString(),
-        style = MaterialTheme.typography.h3,
-        color = MaterialTheme.colors.onBackground
+    Numbers(
+        drawOne = formatToInt(elapsedTime, 0),
+        drawTwo = formatToInt(elapsedTime, 1),
+        drawThree = formatToInt(elapsedTime, 3),
+        drawFour = formatToInt(elapsedTime, 4),
     )
 }
