@@ -45,6 +45,17 @@ class CountdownTimerViewModel : ViewModel() {
         }
     }
 
+    fun restartCountdown() {
+        countDownTimer?.cancel()
+        countDownTimer?.start()
+    }
+
+    fun stopCountdown() {
+        if (countDownTimer != null) {
+            countDownTimer?.cancel()
+        }
+    }
+
     companion object {
         private const val FINISHED = 0L
         private const val ONE_SECOND = 1000L

@@ -15,7 +15,6 @@
  */
 package com.example.androiddevchallenge.ui.components
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,7 @@ import com.example.androiddevchallenge.uitls.colorInfiniteTransition
 @ExperimentalAnimationApi
 @Preview("Numbers Preview", widthDp = 360, heightDp = 640)
 @Composable
-fun NumbersPreview() {
+private fun NumbersPreview() {
     CountdownTimerTheme(darkTheme = true) {
         Numbers(1, 2, 3, 4)
     }

@@ -10,7 +10,9 @@
       the License.
       -->
     <string name="app_name">Countdown Timer</string>
-    <string name="start_countdown_timer_title">Start</string>
     <string name="start_countdown_button">Let\'s Go</string>
-    <string name="chaos_title">Chaos</string>
+    <string name="add_timer_button">Add Timer</string>
+    <string name="content_desc_reset_countdown_button">Reset Countdown</string>
+    <string name="content_desc_finish_countdown_button">Finish Countdown</string>
+    <string name="seconds_placeholder_text">1</string>
 </resources>
