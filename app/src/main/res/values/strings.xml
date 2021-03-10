@@ -9,7 +9,7 @@
       or implied. See the License for the specific language governing permissions and limitations under
       the License.
       -->
-    <string name="app_name">Countdown Timer</string>
+    <string name="app_name">Countdown Chaos</string>
     <string name="start_countdown_button">Let\'s Go</string>
     <string name="add_timer_button">Add Timer</string>
     <string name="content_desc_reset_countdown_button">Reset Countdown</string>
